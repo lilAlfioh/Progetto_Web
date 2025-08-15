@@ -21,7 +21,6 @@ Applicazione web sviluppata con FastAPI per la gestione di eventi, utenti e regi
 - DELETE /events/{id}
 - DELETE /events
 - POST /events/{id}/register
-- POST /events/{id}/upload
 
 ### Utenti
 
