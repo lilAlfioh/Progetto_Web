@@ -27,7 +27,7 @@ def get_event(event_id: int, session: SessionDep):
         raise HTTPException(status_code=404, detail="Event not found")
     return event
 
-@router.post("/events", response_model=EventRead, status_code=201)
+@router.post("/events", status_code=201)
 def create_event(data: EventCreate, session: SessionDep):
     if to_utc(data.date) < datetime.now(timezone.utc):
         raise HTTPException(status_code=400, detail="Date must be in the future")
