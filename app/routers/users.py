@@ -18,7 +18,7 @@ def get_user(username: str, session: SessionDep):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@router.post("/users", response_model=UserRead, status_code=201)
+@router.post("/users", status_code=201)
 def create_user(data: UserCreate, session: SessionDep):
     if session.get(User, data.username):
         raise HTTPException(status_code=409, detail="Username already exists")
@@ -26,7 +26,7 @@ def create_user(data: UserCreate, session: SessionDep):
     session.add(user)
     session.commit()
     session.refresh(user)
-    return user
+    return f"User {user.username} added successfully."
 
 @router.delete("/users")
 def delete_all_users(session: SessionDep):
