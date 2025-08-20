@@ -37,7 +37,7 @@ def create_event(data: EventCreate, session: SessionDep):
     session.refresh(event)
     return "Event successfully added" 
 
-@router.put("/events/{event_id}", response_model=EventRead)
+@router.put("/events/{event_id}")
 def update_event(event_id: int, data: EventCreate, session: SessionDep):
     if to_utc(data.date) < datetime.now(timezone.utc):
         raise HTTPException(status_code=400, detail="Date must be in the future")
@@ -49,7 +49,7 @@ def update_event(event_id: int, data: EventCreate, session: SessionDep):
     session.add(event)
     session.commit()
     session.refresh(event)
-    return event
+    return "Event successfully updated"
 
 @router.delete("/events/{event_id}")
 def delete_event(event_id: int, session: SessionDep):
