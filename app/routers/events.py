@@ -35,7 +35,7 @@ def create_event(data: EventCreate, session: SessionDep):
     session.add(event)
     session.commit()
     session.refresh(event)
-    return event
+    return "Event successfully added" 
 
 @router.put("/events/{event_id}", response_model=EventRead)
 def update_event(event_id: int, data: EventCreate, session: SessionDep):
