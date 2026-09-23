@@ -29,23 +29,37 @@ def get_event(event_id: int, session: SessionDep):
 
 @router.post("/events", status_code=201)
 def create_event(data: EventCreate, session: SessionDep):
-    if to_utc(data.date) < datetime.now(timezone.utc):
+    event_date = to_utc(data.date)
+
+    if event_date < datetime.now(timezone.utc):
         raise HTTPException(status_code=400, detail="Date must be in the future")
-    event = Event(**data.model_dump())
+
+    event_data = data.model_dump()
+    event_data["date"] = event_date
+
+    event = Event(**event_data)
     session.add(event)
     session.commit()
     session.refresh(event)
-    return "Event successfully added" 
+    return "Event successfully added"
 
 @router.put("/events/{event_id}")
 def update_event(event_id: int, data: EventCreate, session: SessionDep):
-    if to_utc(data.date) < datetime.now(timezone.utc):
+    event_date = to_utc(data.date)
+
+    if event_date < datetime.now(timezone.utc):
         raise HTTPException(status_code=400, detail="Date must be in the future")
+
     event = session.get(Event, event_id)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
-    for k, v in data.model_dump().items():
+
+    event_data = data.model_dump()
+    event_data["date"] = event_date
+
+    for k, v in event_data.items():
         setattr(event, k, v)
+
     session.add(event)
     session.commit()
     session.refresh(event)
