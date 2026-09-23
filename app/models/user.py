@@ -7,8 +7,8 @@ class User(SQLModel, table=True):
     email: EmailStr
 
 class UserCreate(SQLModel):
-    username: str
-    name: str
+    username: str = Field(min_length=1)
+    name: str = Field(min_length=1)
     email: EmailStr
 
 class UserRead(SQLModel):
