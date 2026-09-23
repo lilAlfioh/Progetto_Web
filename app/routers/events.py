@@ -56,17 +56,37 @@ def delete_event(event_id: int, session: SessionDep):
     event = session.get(Event, event_id)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
+
+    registrations = session.exec(
+        select(Registration).where(Registration.event_id == event_id)
+    ).all()
+
+    for registration in registrations:
+        session.delete(registration)
+
     session.delete(event)
     session.commit()
-    return {"message": f"Event {event_id} deleted"}
+
+    return {
+        "message": f"Event {event_id} and {len(registrations)} registration(s) deleted"
+    }
 
 @router.delete("/events")
 def delete_all_events(session: SessionDep):
+    registrations = session.exec(select(Registration)).all()
     events = session.exec(select(Event)).all()
-    for e in events:
-        session.delete(e)
+
+    for registration in registrations:
+        session.delete(registration)
+
+    for event in events:
+        session.delete(event)
+
     session.commit()
-    return {"message": f"Deleted {len(events)} events"}
+
+    return {
+        "message": f"{len(events)} event(s) and {len(registrations)} registration(s) deleted"
+    }
 
 @router.post("/events/{event_id}/register", status_code=201)
 def register_to_event(event_id: int, payload: UserCreate, session: SessionDep):
